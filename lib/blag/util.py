@@ -10,7 +10,7 @@ def get_post_list():  # generator
     size = len(db)
     if size == 0:
         return
-    for n in range(max(size - 10, 1), size + 1):  # whoo one-based indexing
+    for n in range(max(size - 10, 1), size):
         yield db.get(eid=n)
 
 
