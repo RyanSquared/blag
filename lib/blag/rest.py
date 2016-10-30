@@ -12,17 +12,11 @@ def get_post_list():
 
 @add_route('/api/v1/post/<int:eid>', methods=['GET'])
 def get_post(eid):
-    post_to_send = None
-    for post in util.get_post_list():
-        if post is None:
-            break
-        elif post["eid"] == eid:
-            post_to_send = post
-            break
-    if not post_to_send:
+    post = util.get_post(eid)
+    if post is None:
         return abort(404)
     else:
-        return jsonify(post_to_send)
+        return jsonify(post)
 
 
 @add_route('/api/v1/new', methods=['POST'])
