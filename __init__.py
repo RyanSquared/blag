@@ -3,15 +3,28 @@
 import config as config_module
 import lib.blag as blag
 
-_config = {item: getattr(config_module, item) for item in dir(config_module)}
-blag.app.config.update(**_config)
+for item in dir(config_module):
+    if item[0] != "_":
+        print("=== Config ===")
+        for key in (key for key in dir(config_module) if key[0] != "_"):
+            blag.app.config[key] = getattr(config_module, key)
+            print(key, "=", getattr(config_module, key))
+        print("===+------+===")
+        break
 
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
-from tornado.wsgi import WSGIContainer
 from lib.blag.rest import app
 
+
+@app.route("/")
+def get_index():
+    with open("static/index.html") as index_file:
+        return index_file.read()
+
+
 if __name__ == '__main__':
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+    from tornado.wsgi import WSGIContainer
     # placeholder for TLS
     http_server = HTTPServer(WSGIContainer(app))
     if hasattr(config_module, 'tornado_options'):
