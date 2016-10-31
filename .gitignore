@@ -93,6 +93,7 @@ ENV/
 posts.json
 
 # Static web files
+static
 
 # Config file
 config.py
