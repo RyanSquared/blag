@@ -25,11 +25,26 @@ if __name__ == '__main__':
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
     from tornado.wsgi import WSGIContainer
+    from tornado.web import Application, RequestHandler
+
     # placeholder for TLS
-    http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(**{
+
+
+    class IndexHandler(RequestHandler):
+        def get(self):
+            with open('./static/index.html') as index_file:
+                return self.write(index_file.read())
+
+    http_server = HTTPServer(
+        Application(
+            [
+                (r'^/api', WSGIContainer(app)),
+                (r'^/$', IndexHandler),
+            ],
+            static_path='./static'))
+
+    http_server.listen(**{  # replace with .bind() .start()
         option: app.config[option]
         for option in app.config if option in ('address', 'port')
     })
-    http_server.listen(**http_server)
     IOLoop.instance().start()
