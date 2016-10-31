@@ -25,10 +25,9 @@ if __name__ == '__main__':
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
     from tornado.wsgi import WSGIContainer
-    from tornado.web import Application, RequestHandler
+    from tornado.web import Application, RequestHandler, FallbackHandler
 
     # placeholder for TLS
-
 
     class IndexHandler(RequestHandler):
         def get(self):
@@ -38,8 +37,10 @@ if __name__ == '__main__':
     http_server = HTTPServer(
         Application(
             [
-                (r'^/api', WSGIContainer(app)),
                 (r'^/$', IndexHandler),
+                (r'^.*', FallbackHandler, {
+                    'fallback': WSGIContainer(app)
+                }),
             ],
             static_path='./static'))
 
