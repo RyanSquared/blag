@@ -27,8 +27,9 @@ if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
     # placeholder for TLS
     http_server = HTTPServer(WSGIContainer(app))
-    if hasattr(config_module, 'tornado_options'):
-        http_server.listen(**config_module.tornado_options)
-    else:
-        http_server.listen(**{'address': '127.0.0.1', 'port': 25562})
+    http_server.listen(**{
+        option: app.config[option]
+        for option in app.config if option in ('address', 'port')
+    })
+    http_server.listen(**http_server)
     IOLoop.instance().start()
