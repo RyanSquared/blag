@@ -4,11 +4,6 @@ html {
 
 * {
 	cursor: default;
-	transition: 0.5s ease;
-}
-
-*:after {
-	transition: 0.5s ease;
 }
 
 .splash {
