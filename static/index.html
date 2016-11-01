@@ -15,7 +15,11 @@
 			<header class="mdl-layout__header-row mdl-color--primary mdl-color-text--white">
 				<span class="mdl-layout-title">Blag</span>
 				<div class="mdl-layout-spacer"></div>
-				<a class="mdl-navigation--link mdl-color-text--white"
+				<button id="set-up-editor"
+					class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+					<i class="material-icons">create</i>
+				</button>
+				<a class="mdl-navigation--link mdl-button mdl-button--icon"
 					href="https://github.com/ChickenNuggers/blag">
 					<i class="material-icons">code</i>
 				</a>
@@ -34,24 +38,26 @@
 						<div class="mdl-card__title">
 							<h3 class="mdl-card__title-text">Posts</h3>
 						</div>
-						<div class="mdl-card__menu">
-							<button id="set-up-editor"
-								class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-								<i class="material-icons">add</i>
-							</button>
-						</div>
 					</div>
 				</div>
 				<div class="mdl-cell mdl-cell--9-col">
 					<div id="post" class="mdl-card mdl-shadow--2dp">
 						<div id="post-title" class="mdl-card__title">
 							<h1 class="mdl-card__title-text">
+								This blog doesn't have any posts!
 							</h1>
 						</div>
 						<div id="post-body" class="mdl-card__supporting-text">
+							Are you the blog owner? Click on the button at the
+							top right to draft a new post.
 							<!-- -->
 						</div>
-						<div id="post-actions" class="mdl-card__actions">
+						<div id="post-actions"
+							class="mdl-card__actions mdl-card--border">
+							<button class="mdl-button mdl-js-button mdl-button--accent"
+								id="prev">Previous</button>
+							<button class="mdl-button mdl-js-button mdl-button--accent"
+								id="next">Next</button>
 						</div>
 					</div>
 				</div>

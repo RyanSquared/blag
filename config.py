@@ -1,2 +1,3 @@
 address = '0.0.0.0'
 port = 25562
+compress_response = True
