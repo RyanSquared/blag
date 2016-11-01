@@ -1,7 +1,15 @@
 from flask import jsonify, abort, request
-from . import util, add_route, app  # noqa F401 // @add_route()
+from . import util, add_route, app
 # util.get_post_list() util.get_post() util.add_post(), util.update_post()
 # util.delete_post()
+
+
+@add_route('/api/v1/config')
+def get_config():
+    return jsonify({
+        key: getattr(app.config['config_module'], key)
+        for key in dir(app.config['config_module']) if key[0] != '_'
+    })
 
 
 @add_route('/api/v1/posts', methods=['GET'])

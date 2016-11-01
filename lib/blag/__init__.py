@@ -7,6 +7,6 @@ db = TinyDB('posts.json')
 config = {}
 
 
-def add_route(route, methods):
+def add_route(route, methods=['GET']):
     print(route, repr(methods))
     return app.route(route, methods=methods)

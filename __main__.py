@@ -12,6 +12,8 @@ for item in dir(config_module):
         print("===+------+===")
         break
 
+blag.app.config['config_module'] = config_module
+
 from lib.blag.rest import app
 
 
