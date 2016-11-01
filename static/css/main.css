@@ -2,6 +2,15 @@ html {
 	display: none;
 }
 
+* {
+	cursor: default;
+	transition: 0.5s ease;
+}
+
+*:after {
+	transition: 0.5s ease;
+}
+
 .splash {
 	position: absolute;
 	top: 0px;
@@ -11,6 +20,61 @@ html {
 	height: 100vh;
 }
 
+#content {
+	width: calc(100vw - 16px);
+	margin: 0px auto;
+}
+
 .mdl-layout__header {
 	box-shadow: none;
+}
+
+.mdl-card {
+	width: 100%;
+}
+
+.mdl-card-list > .mdl-card {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.mdl-card-list:first-child {
+	margin-top: 0px;
+}
+
+.mdl-card-list:last-child {
+	margin-bottom: 0px;
+}
+
+#post {
+	height: 80vh;
+}
+
+#post input, #post textarea {
+	border: none;
+	background: transparent;
+}
+
+#post input:focus, #post textarea:focus {
+	outline: none;
+}
+
+#post-title h1 {
+	-webkit-align-self: auto;
+	align-self: auto;
+}
+
+#post-title input {
+	font: inherit;
+	width: 100vw;
+}
+
+#post-body {
+	flex-grow: 1;
+}
+
+#post-body textarea {
+	font: inherit;
+	width: 100vw;
+	height: 100vh;
 }
