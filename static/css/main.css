@@ -1,0 +1,16 @@
+html {
+	display: none;
+}
+
+.splash {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 100vw;
+	min-height: 100vh;
+	height: 100vh;
+}
+
+.mdl-layout__header {
+	box-shadow: none;
+}
