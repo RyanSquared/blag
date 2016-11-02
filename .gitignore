@@ -89,8 +89,8 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Posts
-posts.json
+# Blog database
+blog.db
 
 # Config file
 config.py
