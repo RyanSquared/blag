@@ -1,8 +1,5 @@
 $(document).ready(function() {
   setTimeout(function() {
-    $('#post-title h1').hide().fadeIn(500);
-    $('#post-body').hide().fadeIn(500);
-    $('#post-actions').hide().fadeIn(500);
     $('html').fadeIn(500);
   }, 500);
 
@@ -11,6 +8,35 @@ $(document).ready(function() {
     ,actions = $('#post-actions')
     ,editing = false
     ,last_title, last_body, last_actions;
+
+  title.hide();
+  body.hide();
+  actions.hide();
+
+  // load up to 10 posts; then, when one is requested, load up another
+  // if the server returns 404 - for instane, if a post is not found, either
+  // disable the '#next' / '#prev' or show the initial text
+
+  var posts, post;
+
+  window.posts = $.getJSON("/api/v1/posts").then((response_data)=> {
+    posts = response_data;
+    if (post = posts[0]) {
+      title.fadeOut(125);
+      title.html(post.title);
+      body.html('');
+      for (index in post.post) {
+        body.append('<p>' + post.post[index] + '<p>');
+      }
+      title.fadeIn(250);
+      body.fadeIn(250);
+      actions.fadeIn(250);
+    } else {
+      title.fadeIn(500);
+      body.fadeIn(500);
+      actions.fadeIn(500);
+    }
+  });
 
   $('#set-up-editor').click(function() {
     if (editing)
