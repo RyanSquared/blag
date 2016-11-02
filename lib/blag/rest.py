@@ -14,8 +14,13 @@ def get_config():
 
 @add_route('/api/v1/posts', methods=['GET'])
 def get_post_list():
-    return jsonify([post for post in util.get_post_list()])
-    # ::TODO:: yieldify util.get_post_list()
+    if request.args.get('start_eid'):
+        return jsonify([
+            post for post in util.get_post_list(start=int(
+                request.args.get('start_eid')))
+        ])
+    else:
+        return jsonify([post for post in util.get_post_list()])
 
 
 @add_route('/api/v1/post/<int:eid>', methods=['GET'])
@@ -39,4 +44,4 @@ def amend_post(eid):
 
 @add_route('/api/v1/posts/<int:eid>', methods=['DELETE'])
 def delete_post(eid):
-    return util.delete_post(eid)
+    return str(util.delete_post(eid))
