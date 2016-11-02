@@ -44,4 +44,4 @@ def amend_post(eid):
 
 @add_route('/api/v1/posts/<int:eid>', methods=['DELETE'])
 def delete_post(eid):
-    return str(util.delete_post(eid))
+    return jsonify({'eid': util.delete_post(eid)})
