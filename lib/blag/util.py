@@ -2,16 +2,20 @@ from datetime import date
 from . import db
 
 
-def get_post_list():  # generator
+def get_post_list(count=10, start=len(db)):  # generator
     """Yeild a list of posts
 
     :returns: array[post()]
     """
-    size = len(db)
-    if size == 0:
+    if start == 0:
         return
-    for n in range(max(size - 10, 1), size):
-        yield db.get(eid=n)
+    while count > 0 and start > 0:
+        post = db.get(eid=start)
+        if post is not None:
+            post.update({'eid': start})
+            count -= 1
+            yield post
+        start -= 1
 
 
 def get_post(eid):
@@ -36,4 +40,4 @@ def update_post(eid, request):
 
 
 def delete_post(eid):
-    pass  # ::TODO:: find a way to sort out dead posts
+    return db.remove(eids=(eid,))
