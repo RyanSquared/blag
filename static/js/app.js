@@ -7,6 +7,7 @@ $(document).ready(function() {
     ,body = $('#post-body')
     ,actions = $('#post-actions')
     ,editing = false
+    ,normal_actions = $('#post-actions').html()
     ,last_title, last_body, last_actions;
 
   title.hide();
@@ -19,24 +20,22 @@ $(document).ready(function() {
 
   var posts, post;
 
-  window.posts = $.getJSON("/api/v1/posts").then((response_data)=> {
-    posts = response_data;
-    if (post = posts[0]) {
-      title.fadeOut(125);
-      title.html(post.title);
-      body.html('');
-      for (index in post.post) {
-        body.append('<p>' + post.post[index] + '<p>');
+  function reload() {
+    $.getJSON("/api/v1/posts").then((response_data)=> {
+      posts = response_data;
+      if (post = posts[0]) {
+        title.fadeOut(125, ()=> title.html(post.title).fadeIn(125));
+        body.fadeOut(125, ()=> body.html(post.post).fadeIn(125));
+        actions.fadeOut(125, ()=> actions.html(normal_actions).fadeIn(125));
+      } else {
+        title.fadeIn(250);
+        body.fadeIn(250);
+        actions.fadeIn(250);
       }
-      title.fadeIn(250);
-      body.fadeIn(250);
-      actions.fadeIn(250);
-    } else {
-      title.fadeIn(500);
-      body.fadeIn(500);
-      actions.fadeIn(500);
-    }
-  });
+    });
+  }
+
+  reload();
 
   $('#set-up-editor').click(function() {
     if (editing)
@@ -64,5 +63,13 @@ $(document).ready(function() {
     title.fadeOut(125, ()=> title.html(last_title)).fadeIn(250);
     body.fadeOut(125, ()=> body.html(last_body)).fadeIn(250);
     actions.fadeOut(125, ()=> actions.html(last_actions)).fadeIn(250);
+  });
+
+  $(document).on('click', '#btn-post', function() {
+    data = {
+      title: $('#post-title input').val(),
+      post: markdown.toHTML($('#post-body textarea').val()),
+    };
+    $.post('/api/v1/new', data).then(reload);
   });
 });
