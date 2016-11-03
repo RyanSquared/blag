@@ -23,6 +23,17 @@ def get_post_list():
         return jsonify([post for post in util.get_post_list()])
 
 
+@add_route('/api/v1/posts/reverse', methods=['GET'])
+def get_reverse_post_list():
+    if request.args.get('start_eid'):
+        return jsonify([
+            post for post in util.get_reverse_post_list(start=int(
+                request.args.get('start_eid')))
+            ])
+    else:
+        return jsonify([post for post in util.get_reverse_post_list()])
+
+
 @add_route('/api/v1/post/<int:eid>', methods=['GET'])
 def get_post(eid):
     post = util.get_post(eid)
