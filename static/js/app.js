@@ -5,7 +5,7 @@ $(document).ready(function() {
     ,menu = $('#post-menu')
     ,editing = false
     ,normal_actions = $('#post-actions').html()
-    ,last_title, last_body, last_actions;
+    ,last_title, last_body, last_actions, base_title, base_body, base_actions;
 
   function fadeInAll(callback, fade_menu) {
     title.fadeIn(250, ()=>
@@ -32,6 +32,10 @@ $(document).ready(function() {
   actions.hide();
   menu.hide();
 
+  base_title = title.html();
+  base_body = body.html();
+  base_actions = actions.html();
+
   // load up to 10 posts; then, when one is requested, load up another
   // if the server returns 404 - for instane, if a post is not found, either
   // disable the '#next' / '#prev' or show the initial text
@@ -39,6 +43,7 @@ $(document).ready(function() {
   var posts, post, post_count;
 
   function reload(count) {
+    editing = false;
     var url = count ? '/api/v1/posts?start_eid=' + count : '/api/v1/posts'
     $.getJSON(url).then((response_data)=> {
       posts = count ? posts : response_data;
@@ -50,15 +55,21 @@ $(document).ready(function() {
           fadeInAll(null, true);
         });
       } else {
-        fadeInAll();
+        fadeOutAll(()=> {
+          title.html(base_title);
+          body.html(base_body);
+          actions.html(base_actions);
+          fadeInAll();
+        })
       }
     });
   }
 
   setTimeout(function() {
+    info_header = $('#info .mdl-card__title').hide();
+    info_element = $('#info .mdl-card__supporting-text').html('').hide();
     $('html').fadeIn(500, ()=> {
       reload();
-      info_element = $('#info .mdl-card__supporting-text').html('').hide();
       $.getJSON('/api/v1/config').then((response)=> {
         data = response.about;
         for (index in data) {
@@ -66,7 +77,7 @@ $(document).ready(function() {
             '<br /></span>');
           info_element.append(el);
         }
-        info_element.fadeIn(250);
+        info_header.fadeIn(250, ()=> info_element.fadeIn(250));
       });
     });
   }, 500);
@@ -107,4 +118,12 @@ $(document).ready(function() {
     };
     $.post('/api/v1/new', data).then(()=> reload());
   });
+
+  $('#delete').on('click', function() {
+    $.ajax({
+      url: '/api/v1/posts/' + post.eid,
+      type: 'DELETE',
+      success: (()=> reload()),
+    })
+  })
 });
