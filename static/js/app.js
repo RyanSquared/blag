@@ -8,11 +8,11 @@ $(document).ready(function() {
     ,last_title, last_body, last_actions;
 
   function fadeInAll(callback, fade_menu) {
-    title.fadeIn(125, ()=>
-        body.fadeIn(125, ()=>
-          actions.fadeIn(125, function() {
+    title.fadeIn(250, ()=>
+        body.fadeIn(250, ()=>
+          actions.fadeIn(250, function() {
             if (fade_menu) {
-              menu.fadeIn(125, callback);
+              menu.fadeIn(250, callback);
             } else if (callback) {
               callback();
             }
@@ -20,11 +20,11 @@ $(document).ready(function() {
   }
 
   function fadeOutAll(callback, fade_menu) {
-    title.fadeOut(250);
-    body.fadeOut(250);
-    actions.fadeOut(250, callback);
+    title.fadeOut(500);
+    body.fadeOut(500);
+    actions.fadeOut(500, callback);
     if (fade_menu)
-      menu.fadeOut(250);
+      menu.fadeOut(500);
   }
 
   title.hide();
@@ -56,8 +56,19 @@ $(document).ready(function() {
   }
 
   setTimeout(function() {
-    $('html').fadeIn(500);
-    reload();
+    $('html').fadeIn(500, ()=> {
+      reload();
+      info_element = $('#info .mdl-card__supporting-text').html('').hide();
+      $.getJSON('/api/v1/config').then((response)=> {
+        data = response.about;
+        for (index in data) {
+          el = $('<span><b>' + data[index][0] + ':</b> ' + data[index][1] +
+            '<br /></span>');
+          info_element.append(el);
+        }
+        info_element.fadeIn(250);
+      });
+    });
   }, 500);
 
   $('#set-up-editor').click(function() {
