@@ -1,27 +1,36 @@
 $(document).ready(function() {
-  function fadeInAll(callback) {
-    title.fadeIn(125, ()=>
-        body.fadeIn(125, ()=>
-          actions.fadeIn(125, callback)));
-  }
-
-  function fadeOutAll(callback) {
-    title.fadeOut(250);
-    body.fadeOut(250);
-    actions.fadeOut(250, callback);
-  }
-
-
   var title = $('#post-title h1')
     ,body = $('#post-body')
     ,actions = $('#post-actions')
+    ,menu = $('#post-menu')
     ,editing = false
     ,normal_actions = $('#post-actions').html()
     ,last_title, last_body, last_actions;
 
+  function fadeInAll(callback, fade_menu) {
+    title.fadeIn(125, ()=>
+        body.fadeIn(125, ()=>
+          actions.fadeIn(125, function() {
+            if (fade_menu) {
+              menu.fadeIn(125, callback);
+            } else if (callback) {
+              callback();
+            }
+          })));
+  }
+
+  function fadeOutAll(callback, fade_menu) {
+    title.fadeOut(250);
+    body.fadeOut(250);
+    actions.fadeOut(250, callback);
+    if (fade_menu)
+      menu.fadeOut(250);
+  }
+
   title.hide();
   body.hide();
   actions.hide();
+  menu.hide();
 
   // load up to 10 posts; then, when one is requested, load up another
   // if the server returns 404 - for instane, if a post is not found, either
@@ -38,7 +47,7 @@ $(document).ready(function() {
           title.html(post.title);
           body.html(post.post);
           actions.html(normal_actions);
-          fadeInAll();
+          fadeInAll(null, true);
         });
       } else {
         fadeInAll();
@@ -66,7 +75,7 @@ $(document).ready(function() {
         '<button class="mdl-button mdl-js-button mdl-js-ripple ' +
         'mdl-button--accent" id="btn-discard">Discard</button>');
       fadeInAll(()=> $('#post-title input').focus());
-    });
+    }, true);
   });
 
   $(document).on('click', '#btn-discard', function() {
@@ -75,13 +84,14 @@ $(document).ready(function() {
       title.html(last_title);
       body.html(last_body);
       actions.html(last_actions);
-      fadeInAll();
+      fadeInAll(null, true);
     });
   });
 
   $(document).on('click', '#btn-post', function() {
     data = {
-      title: $('#post-title input').val(),
+      title: $('<div />').text($('#post-title input').val()).html(),
+      post_source: $('#post-body textarea').val(),
       post: markdown.toHTML($('#post-body textarea').val()),
     };
     $.post('/api/v1/new', data).then(()=> reload());
