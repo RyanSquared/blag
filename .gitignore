@@ -90,7 +90,7 @@ ENV/
 .ropeproject
 
 # Blog database
-blog.db
+blog.db*
 
 # Config file
 config.py
