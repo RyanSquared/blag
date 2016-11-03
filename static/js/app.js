@@ -149,6 +149,6 @@ $(document).ready(function() {
         } while (length >= 0)
         reload();
       }),
-    })
-  })
+    });
+  });
 });
