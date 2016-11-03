@@ -6,10 +6,10 @@ from . import util, add_route, app
 
 @add_route('/api/v1/config')
 def get_config():
-    return jsonify({
+    return jsonify(sorted({
         key: getattr(app.config['config_module'], key)
         for key in dir(app.config['config_module']) if key[0] != '_'
-    })
+    }.items()))
 
 
 @add_route('/api/v1/posts', methods=['GET'])
