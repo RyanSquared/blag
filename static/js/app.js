@@ -43,18 +43,11 @@ $(document).ready(function() {
   var posts = [], post, bottom_post;
 
   function reload(count) {
-    console.log(posts);
     editing = false;
     var url = count ? '/api/v1/posts?start_eid=' + count : '/api/v1/posts'
     $.getJSON(url).then((response_data)=> {
       for (index in response_data) {
-        var current_post = response_data[index]
-        var has_index = false;
-        for (stored_index in posts)
-          if (stored_index == current_post.eid)
-            has_index = true;
-        if (!has_index)
-          posts[current_post.eid] = current_post;
+        posts[response_data[index].eid] = response_data[index];
       }
 
       var post_index = posts.length;
@@ -96,7 +89,7 @@ $(document).ready(function() {
     });
   }, 500);
 
-  $('#set-up-editor').click(function() {
+  function setUpEditor(setup) {
     if (editing)
       return
     editing = true;
@@ -110,9 +103,13 @@ $(document).ready(function() {
         'mdl-js-ripple mdl-button--accent" id="btn-post">Post</button>&nbsp;' +
         '<button class="mdl-button mdl-js-button mdl-js-ripple ' +
         'mdl-button--accent" id="btn-discard">Discard</button>');
+      if (setup)
+        setup(); // use this for adding custom content to the textarea
       fadeInAll(()=> $('#post-title input').focus());
     }, true);
-  });
+  }
+
+  $('#set-up-editor').click(()=> setUpEditor());
 
   $(document).on('click', '#btn-discard', function() {
     editing = false;
@@ -125,7 +122,7 @@ $(document).ready(function() {
   });
 
   $(document).on('click', '#btn-post', function() {
-    data = {
+    var data = {
       title: $('<div />').text($('#post-title input').val()).html(),
       post_source: $('#post-body textarea').val(),
       post: markdown.toHTML($('#post-body textarea').val()),
@@ -151,4 +148,23 @@ $(document).ready(function() {
       }),
     });
   });
+
+  $(document).on('click', '#btn-update', function() {
+    var data = {
+      title: $('<div />').text($('#post-title input').val()).html(),
+      post_source: $('#post-body textarea').val(),
+      post: markdown.toHTML($('#post-body textarea').val()),
+    };
+    $.post('/api/v1/posts/' + post.eid, data).then(()=> reload());
+    // TODO make it open edited post
+  });
+
+  $('#edit').on('click', ()=> setUpEditor(function() {
+    $('#post-title h1 input').val(post.title);
+    $('#post-body textarea').val(post.post_source);
+    actions.html('<button class="mdl-button mdl-js-button ' +
+      'mdl-js-ripple mdl-button--accent" id="btn-update">Update</button>' +
+      '&nbsp;<button class="mdl-button mdl-js-button mdl-js-ripple ' +
+      'mdl-button--accent" id="btn-discard">Discard</button>');
+  }));
 });
