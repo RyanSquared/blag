@@ -12,7 +12,7 @@ def get_post_list(count=10, start=-1):  # generator
         return  # no posts in database
     for post in db_cursor.execute(
             """SELECT * FROM posts ORDER BY eid DESC LIMIT ?""", (count, )):
-        yield dict(zip(('eid', 'title', 'post'), post))
+        yield dict(zip(('eid', 'title', 'post', 'post_source'), post))
 
 
 def get_post(eid):
@@ -28,9 +28,9 @@ def add_post(request):
     """
     post = request.values.to_dict()
     db_cursor.execute("""
-        INSERT INTO posts (title, post)
-        VALUES (?,?)
-        """, (post['title'], post['post']))
+        INSERT INTO posts (title, post, post_source)
+        VALUES (?,?, ?)
+        """, (post['title'], post['post'], post['post_source']))
     db.commit()
     return db_cursor.execute("SELECT COUNT(*) FROM posts").fetchone()[0]
 
@@ -42,8 +42,9 @@ def update_post(eid, request):
         SET
             title=?
             post=?
+            post_source=?
         WHERE eid=?
-            """, (post['title'], post['post'], eid))
+            """, (post['title'], post['post'], post['post_source'], eid))
     return eid
 
 
