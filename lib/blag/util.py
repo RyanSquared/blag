@@ -17,8 +17,9 @@ def get_post_list(count=10, start=-1):  # generator
 
 def get_post(eid):
     return dict(
-        zip(('eid', 'title', 'post'), db_cursor.execute(
-            """SELECT * FROM posts WHERE id = ?""", (eid,))))
+        zip(('eid', 'title', 'post'),
+            db_cursor.execute("""SELECT * FROM posts WHERE id = ?""", (eid,
+                                                                       ))))
 
 
 def add_post(request):
@@ -36,18 +37,18 @@ def add_post(request):
 
 
 def update_post(eid, request):
-    post = request.get_json()
+    post = request.values.to_dict()
     db_cursor.execute("""
         UPDATE posts
         SET
-            title=?
-            post=?
+            title=?,
+            post=?,
             post_source=?
         WHERE eid=?
-            """, (post['title'], post['post'], post['post_source'], eid))
+        """, (post['title'], post['post'], post['post_source'], eid))
     return eid
 
 
 def delete_post(eid):
-    db_cursor.execute("""DELETE FROM posts WHERE eid = ?""", (eid,))
+    db_cursor.execute("""DELETE FROM posts WHERE eid = ?""", (eid, ))
     return eid
