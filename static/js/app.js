@@ -40,14 +40,28 @@ $(document).ready(function() {
   // if the server returns 404 - for instane, if a post is not found, either
   // disable the '#next' / '#prev' or show the initial text
 
-  var posts, post, post_count;
+  var posts = [], post, bottom_post;
 
   function reload(count) {
+    console.log(posts);
     editing = false;
     var url = count ? '/api/v1/posts?start_eid=' + count : '/api/v1/posts'
     $.getJSON(url).then((response_data)=> {
-      posts = count ? posts : response_data;
-      if (post = posts[0]) {
+      for (index in response_data) {
+        var current_post = response_data[index]
+        var has_index = false;
+        for (stored_index in posts)
+          if (stored_index == current_post.eid)
+            has_index = true;
+        if (!has_index)
+          posts[current_post.eid] = current_post;
+      }
+
+      var post_index = posts.length;
+      while (post_index >= 0 && !posts[post_index])
+        post_index--;
+
+      if (post = posts[post_index]) {
         fadeOutAll(()=> {
           title.html(post.title);
           body.html(post.post);
@@ -123,7 +137,18 @@ $(document).ready(function() {
     $.ajax({
       url: '/api/v1/posts/' + post.eid,
       type: 'DELETE',
-      success: (()=> reload()),
+      success: (()=> {
+        var length = posts.length;
+        delete posts[length - 1];
+        do {
+          if (posts[length]) {
+            break;
+          }
+          delete posts[posts.length];
+          length -= 1;
+        } while (length >= 0)
+        reload();
+      }),
     })
   })
 });
