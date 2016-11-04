@@ -57,6 +57,7 @@ def update_post(eid, request):
             post_source=?
         WHERE eid=?
         """, (post['title'], post['post'], post['post_source'], eid))
+    db.commit()
     return eid
 
 
