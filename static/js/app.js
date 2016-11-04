@@ -158,7 +158,9 @@ $(document).ready(function() {
       post_source: $('#post-body textarea').val(),
       post: markdown.toHTML($('#post-body textarea').val()),
     };
-    $.post('/api/v1/posts/' + post.eid, data).then(()=> reload());
+    $.post('/api/v1/posts/' + post.eid, data).then(()=>
+        reload(post.eid).then(()=> showPost(post.eid))
+    );
     // TODO make it open edited post
   });
 
