@@ -1,5 +1,7 @@
 from . import db_cursor, db
 
+query = "eid,title,post,post_source".split(',')
+
 
 def get_post_list(count=10, start=-1):  # generator
     """Yeild a list of posts
@@ -11,9 +13,9 @@ def get_post_list(count=10, start=-1):  # generator
     if start == 0:
         return  # no posts in database
     for post in db_cursor.execute(
-            """SELECT * FROM posts WHERE eid <= ? ORDER BY eid DESC LIMIT ?""",
-            (start, count)):
-        yield dict(zip(('eid', 'title', 'post', 'post_source'), post))
+            """SELECT eid,title,post,post_source FROM posts WHERE eid <= ?
+            ORDER BY eid DESC LIMIT ?""", (start, count)):
+        yield dict(zip(query, post))
 
 
 def get_reverse_post_list(count=10, start=0):  # generator
@@ -22,15 +24,16 @@ def get_reverse_post_list(count=10, start=0):  # generator
     :returns: generator(post, [post...])
     """
     for post in db_cursor.execute(
-            """SELECT * FROM posts WHERE eid >= ? ORDER BY eid ASC LIMIT ?""",
-            (start, count)):
+            """SELECT eid,title,post,post_source FROM posts WHERE eid >= ?
+            ORDER BY eid ASC LIMIT ?""", (start, count)):
         yield dict(zip(('eid', 'title', 'post', 'post_source'), post))
 
 
 def get_post(eid):
     return dict(
         zip(('eid', 'title', 'post'), db_cursor.execute(
-            """SELECT * FROM posts WHERE eid = ?""", (eid,))))
+            """SELECT eid,title,post,post_source FROM posts WHERE eid = ?""",
+            (eid,))))
 
 
 def add_post(request):
