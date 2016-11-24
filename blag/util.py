@@ -4,6 +4,10 @@ from hashlib import sha512
 query = "eid,title,post,post_source".split(',')
 
 
+def makepost(input):
+    return dict(zip(query, input))
+
+
 class InvalidUsage(Exception):
     status_code = 400
 
@@ -36,7 +40,7 @@ def get_post_list(count=10, start=-1):  # generator
     for post in db_cursor.execute(
             """SELECT eid,title,post,post_source FROM posts WHERE eid <= ?
             ORDER BY eid DESC LIMIT ?""", (start, count)):
-        yield dict(zip(query, post))
+        yield makepost(post)
 
 
 def get_reverse_post_list(count=10, start=0):  # generator
@@ -47,14 +51,13 @@ def get_reverse_post_list(count=10, start=0):  # generator
     for post in db_cursor.execute(
             """SELECT eid,title,post,post_source FROM posts WHERE eid >= ?
             ORDER BY eid ASC LIMIT ?""", (start, count)):
-        yield dict(zip(('eid', 'title', 'post', 'post_source'), post))
+        yield makepost(post)
 
 
 def get_post(eid):
-    return dict(
-        zip(('eid', 'title', 'post'), db_cursor.execute(
+    return makepost(db_cursor.execute(
             """SELECT eid,title,post,post_source FROM posts WHERE eid = ?""",
-            (eid,))))
+            (eid,)))
 
 
 def add_post(request):
