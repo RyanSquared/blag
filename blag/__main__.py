@@ -13,6 +13,9 @@ class IndexHandler(RequestHandler):
         with open('./static/index.html') as index_file:
             return self.write(index_file.read())
 
+if not 'ssl_options' in app.config:
+    raise Exception("Field `ssl_options` not found in config")
+
 http_server = HTTPServer(
     Application(
         [
@@ -21,7 +24,7 @@ http_server = HTTPServer(
                 'fallback': WSGIContainer(app)
             }),
         ],
-        static_path='./static'))
+        static_path='./static'), ssl_options=app.config['ssl_options'])
 
 http_server.listen(**{  # replace with .bind() .start()
     option: app.config[option]
