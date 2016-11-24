@@ -18,10 +18,17 @@ for item in dir(config_module):
 
 app.config['config_module'] = config_module
 
+
 @app.route("/")
 def get_index():
     with open("static/index.html") as index_file:
         return index_file.read()
+
+
+def add_route(route, methods=['GET']):
+    print(route, repr(methods))
+    return app.route(route, methods=methods)
+
 
 db = sqlite3.connect('blog.db')
 db_cursor = db.cursor()
@@ -33,10 +40,6 @@ db_cursor.execute("""CREATE TABLE IF NOT EXISTS Posts (
 )""")
 db.commit()
 
-def add_route(route, methods=['GET']):
-    print(route, repr(methods))
-    return app.route(route, methods=methods)
-
-from . import rest
+from . import rest # noqa E402
 
 rest.add_routes(add_route, app)
