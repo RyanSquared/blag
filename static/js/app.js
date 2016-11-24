@@ -27,6 +27,25 @@ $(document).ready(function() {
       menu.fadeOut(500);
   }
 
+  var toast = document.querySelector('#login-toast')
+    ,toast_message = toast.querySelector('.mdl-snackbar__text').innerHTML
+
+  function showToast() {
+    // can't use jQuery with MaterialSnackbar
+    toast.MaterialSnackbar.showSnackbar({
+      message: toast_message
+    });
+  }
+
+  function checkIfPass(callback) {
+    if ($('#password').val() != '') {
+      if (callback)
+        callback();
+    } else {
+      showToast();
+    }
+  }
+
   title.hide();
   body.hide();
   actions.hide();
@@ -35,10 +54,6 @@ $(document).ready(function() {
   base_title = title.html();
   base_body = body.html();
   base_actions = actions.html();
-
-  // load up to 10 posts; then, when one is requested, load up another
-  // if the server returns 404 - for instane, if a post is not found, either
-  // disable the '#next' / '#prev' or show the initial text
 
   var posts = [], post;
 
@@ -50,24 +65,20 @@ $(document).ready(function() {
     while (post_index >= 0 && !posts[post_index])
       post_index--;
 
-    if (post = posts[post_index]) {
+    if (post = posts[post_index])
       fadeOutAll(()=> {
         title.html(post.title);
         body.html(post.post);
         actions.html(normal_actions);
         fadeInAll(null, true);
       });
-    } else if (posts.length == 0) {
-      // do not trigger if you have a post loaded
+    else
       fadeOutAll(()=> {
         title.html(base_title);
         body.html(base_body);
         actions.html(base_actions);
         fadeInAll();
-      })
-    } else {
-      post = old_post; // restore old post to memory
-    }
+      });
   }
 
   function reload(start, direction) {
@@ -78,7 +89,6 @@ $(document).ready(function() {
       for (index in response_data) {
         posts[response_data[index].eid] = response_data[index];
       }
-
     });
   }
 
@@ -131,38 +141,56 @@ $(document).ready(function() {
     });
   });
 
-  $(document).on('click', '#btn-post', function() {
+  $(document).on('click', '#btn-post', ()=> checkIfPass(function() {
     var data = {
       title: $('<div />').text($('#post-title input').val()).html(),
       post_source: $('#post-body textarea').val(),
       post: markdown.toHTML($('#post-body textarea').val()),
     };
-    $.post('/api/v1/new', data).then(()=> reload().then(()=> showPost()));
-  });
+    $.ajax('/api/v1/new', {
+      method: "POST",
+      headers: {
+        'Authorization': 'Basic ' + btoa($('#password').val())
+      },
+      data: data,
+    }).then(()=> reload().then(()=> showPost()));
+  }));
 
-  $('#delete').on('click', function() {
+  $('#delete').on('click', ()=> checkIfPass(function() {
     $.ajax({
       url: '/api/v1/posts/' + post.eid,
-      type: 'DELETE',
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Basic ' + btoa($('#password').val())
+      },
       success: (()=> {
         var eid = post.eid;
         delete posts[eid];
         showPost(eid - 1);
       }),
+      error: ((data)=> {
+        if (data.status == 401)
+          toast.MaterialSnackbar.showSnackbar({
+            message: "Invalid password!"
+          })
+      }),
     });
-  });
+  }));
 
-  $(document).on('click', '#btn-update', function() {
+  $(document).on('click', '#btn-update', ()=> checkIfPass(function() {
     var data = {
       title: $('<div />').text($('#post-title input').val()).html(),
       post_source: $('#post-body textarea').val(),
       post: markdown.toHTML($('#post-body textarea').val()),
     };
-    $.post('/api/v1/posts/' + post.eid, data).then(()=>
-        reload(post.eid).then(()=> showPost(post.eid))
-    );
-    // TODO make it open edited post
-  });
+    $.ajax('/api/v1/posts/' + post.eid, {
+      method: "POST",
+      headers: {
+        'Authorization': 'Basic ' + btoa($('#password').val())
+      },
+      data: data,
+    }).then(()=> reload(post.eid).then(()=> showPost(post.eid)));
+  }));
 
   $('#edit').on('click', ()=> setUpEditor(function() {
     $('#post-title h1 input').val(post.title);
