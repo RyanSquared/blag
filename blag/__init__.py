@@ -1,5 +1,6 @@
 from flask import Flask
 import sqlite3
+
 import config as config_module
 
 app = Flask(__name__)
@@ -10,6 +11,7 @@ for item in dir(config_module):
         print("=== Config ===")
         for key in (key for key in dir(config_module) if key[0] != "_"):
             app.config[key] = getattr(config_module, key)
+            config[key] = getattr(config_module, key)
             print(key, "=", getattr(config_module, key))
         print("===+------+===")
         break
