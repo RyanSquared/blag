@@ -65,6 +65,9 @@ $(document).ready(function() {
     while (post_index >= 0 && !posts[post_index])
       post_index--;
 
+    if (post && post_index == post.eid)
+      return;
+
     if (post = posts[post_index])
       fadeOutAll(()=> {
         title.html(post.title);
