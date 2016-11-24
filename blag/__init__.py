@@ -29,10 +29,6 @@ db_cursor.execute("""CREATE TABLE IF NOT EXISTS Posts (
     post TEXT NOT NULL,
     post_source TEXT NOT NULL
 )""")
-db_cursor.execute("""CREATE TABLE IF NOT EXISTS About (
-    name TEXT NOT NULL,
-    desc TEXT NOT NULL
-)""")
 db.commit()
 
 def add_route(route, methods=['GET']):
