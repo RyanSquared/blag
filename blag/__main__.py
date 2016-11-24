@@ -8,10 +8,12 @@ from tornado.web import Application, RequestHandler, FallbackHandler
 
 # placeholder for TLS Soon(tm) TODO
 
+
 class IndexHandler(RequestHandler):
     def get(self):
         with open('./static/index.html') as index_file:
             return self.write(index_file.read())
+
 
 if 'ssl_options' not in app.config:
     raise Exception("Field `ssl_options` not found in config")
