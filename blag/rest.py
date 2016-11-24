@@ -1,9 +1,36 @@
+import base64
 from flask import jsonify, abort, request
+from functools import wraps
 from . import util
-# util.get_post_list() util.get_post() util.add_post(), util.update_post()
-# util.delete_post()
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        has_authorization_header = False
+        auth = None
+        try:
+            auth = request.headers['Authorization']
+            has_authorization_header = True
+        except:
+            return
+        if not has_authorization_header:
+            raise util.InvalidUsage("Missing Authorization field", 400)
+        auth = base64.b64decode(auth.split(' ')[1])
+        if not util.check_auth(auth):
+            raise util.InvalidUsage("Invalid authorization", 401)
+        return f(*args, **kwargs)
+    return decorated
+
 
 def add_routes(add_route, app):
+    @app.errorhandler(util.InvalidUsage)
+    def handle_invalid_usage(error):
+        response = jsonify(error.to_dict())
+        response.status_code = error.status_code
+        return response
+
+
     @add_route('/api/v1/config')
     def get_config():
         return jsonify({
@@ -44,15 +71,18 @@ def add_routes(add_route, app):
 
 
     @add_route('/api/v1/new', methods=['POST'])
+    @requires_auth
     def make_post():
         return jsonify({"eid": util.add_post(request)})
 
 
-    @add_route('/api/v1/posts/<int:eid>', methods=['PUT', 'POST'])  # don't POST
+    @add_route('/api/v1/posts/<int:eid>', methods=['PUT', 'POST'])
+    @requires_auth
     def amend_post(eid):
         return jsonify({"eid": util.update_post(eid, request)})
 
 
     @add_route('/api/v1/posts/<int:eid>', methods=['DELETE'])
+    @requires_auth
     def delete_post(eid):
         return jsonify({'eid': util.delete_post(eid)})
