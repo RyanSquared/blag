@@ -30,14 +30,12 @@ def add_routes(add_route, app):
         response.status_code = error.status_code
         return response
 
-
     @add_route('/api/v1/config')
     def get_config():
         return jsonify({
             key: getattr(app.config['config_module'], key)
             for key in dir(app.config['config_module']) if key[0] != '_'
         })
-
 
     @add_route('/api/v1/posts', methods=['GET'])
     def get_post_list():
@@ -49,7 +47,6 @@ def add_routes(add_route, app):
         else:
             return jsonify([post for post in util.get_post_list()])
 
-
     @add_route('/api/v1/posts/reverse', methods=['GET'])
     def get_reverse_post_list():
         if request.args.get('start_eid'):
@@ -60,7 +57,6 @@ def add_routes(add_route, app):
         else:
             return jsonify([post for post in util.get_reverse_post_list()])
 
-
     @add_route('/api/v1/post/<int:eid>', methods=['GET'])
     def get_post(eid):
         post = util.get_post(eid)
@@ -69,18 +65,15 @@ def add_routes(add_route, app):
         else:
             return jsonify(post)
 
-
     @add_route('/api/v1/new', methods=['POST'])
     @requires_auth
     def make_post():
         return jsonify({"eid": util.add_post(request)})
 
-
     @add_route('/api/v1/posts/<int:eid>', methods=['PUT', 'POST'])
     @requires_auth
     def amend_post(eid):
         return jsonify({"eid": util.update_post(eid, request)})
-
 
     @add_route('/api/v1/posts/<int:eid>', methods=['DELETE'])
     @requires_auth
