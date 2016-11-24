@@ -5,5 +5,9 @@ about = (
     ('Name', 'Ryan'),  # CHANGE WHEN YOU INSTALL
     ('Email', 'ryan@hashbang.sh'),
 )
+ssl_options = {
+    "certfile": "ssl/cert.pem",
+    "keyfile": "ssl/key.pem",
+}
 # change this to a sha512 hash of your password
 password = None
