@@ -5,3 +5,5 @@ about = (
     ('Name', 'Ryan'),  # CHANGE WHEN YOU INSTALL
     ('Email', 'ryan@hashbang.sh'),
 )
+# change this to a sha512 hash of your password
+password = None
