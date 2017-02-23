@@ -61,23 +61,24 @@ $(document).ready(function() {
     // pass an EID to be "shifted down" to find a post
     // you can also pass the direct EID for a post
     var post_index = eid ? eid : posts.length;
-    var old_post = post;
+    var new_post;
+
     while (post_index >= 0 && !posts[post_index])
       post_index--;
 
     if (post && post_index == post.eid)
       return;
 
-    if (post = posts[post_index])
+    if (new_post = posts[post_index]) {
+      post = new_post;
       fadeOutAll(()=> {
         title.html(post.title);
         body.html(post.post);
         actions.html(normal_actions);
         fadeInAll(null, true);
       });
-    else if (old_post)
-      post = old_post;
-    else
+    }
+    else if (!post)
       fadeOutAll(()=> {
         title.html(base_title);
         body.html(base_body);
@@ -171,6 +172,7 @@ $(document).ready(function() {
       success: (()=> {
         var eid = post.eid;
         delete posts[eid];
+        post = undefined;
         showPost(eid - 1);
       }),
       error: ((data)=> {
