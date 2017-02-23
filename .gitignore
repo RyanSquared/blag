@@ -92,5 +92,9 @@ ENV/
 # Blog database
 blog.db*
 
-# Config file
+# Config files
 config.py
+ssl/
+
+# Vim
+.vimrc
