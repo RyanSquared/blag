@@ -26,5 +26,5 @@ echo -n 'password' | sha512sum | awk '{ print $1 }'
 
 Put the outputted text in the password field like this.
 ```
-password = 1667443199c48200fa038936025f492160250babd8b0c6ba94495ea751ae76a35af7b193d5c41fcb37f487f69046c005d751e7039c0f02f1197a25c4c987c0b2
+password = "1667443199c48200fa038936025f492160250babd8b0c6ba94495ea751ae76a35af7b193d5c41fcb37f487f69046c005d751e7039c0f02f1197a25c4c987c0b2"
 ```
