@@ -75,6 +75,8 @@ $(document).ready(function() {
         actions.html(normal_actions);
         fadeInAll(null, true);
       });
+    else if (old_post)
+      post = old_post;
     else
       fadeOutAll(()=> {
         title.html(base_title);
