@@ -19,7 +19,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
 
 ## SHA-512 password
 
-You need to use a Hashed password in Blag, use this command to generate the hash.
+You need to use a hashed password in Blag, use this command to generate the hash.
 ```
 ./passwd.sh
 ```
