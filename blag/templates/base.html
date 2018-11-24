@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<!-- vim:set et sw=2 ts=2 ft=htmldjango: -->
+
+{%- macro link(target, accesskey, content) %}
+{%- set href = url_for(target, **kwargs) -%}
+{%- autoescape false -%}
+{%- if request.path == href -%}
+  <a class="navbar-item is-active" href="{{ href }}"
+    accesskey="{{ accesskey }}">{{ content }}</a>
+{%- else -%}
+  <a class="navbar-item" href="{{ href }}" accesskey="{{ accesskey }}">{{ content }}</a>
+{%- endif -%}
+{%- endautoescape -%}
+{% endmacro %}
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script src="{{ url_for('static', filename='node_modules/vue/dist/vue.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/bulma/css/bulma.min.css') }}">
+    <title>{{ config.APP_NAME }}</title>
+    <script charset="utf-8">
+      function get_target(element) {
+        return document.querySelector(element.getAttribute("data-target"));
+      }
+
+      /*
+       * Mixins:
+       *
+       * - close_target: when using `@click="close"`, will close [data-target]
+       *
+       * - copy_target: when using `@click="copy"`, will clipboard [data-target]
+       *
+       * To use: Add `mixins = [defaultMixin]` to your Vue component instance
+       */
+      var defaultMixin = {
+        methods: {
+          close_target(event) {
+            console.log(event);
+            get_target(event.target).remove();
+          },
+          copy_target(event) {
+            let target = get_target(event.target);
+            let input_element = document.createElement("input");
+            document.querySelector("body").appendChild(input_element);
+            input_element.value = target.innerText;
+            input_element.select()
+            document.execCommand("copy");
+            input_element.remove();
+          }
+        }
+      }
+    </script>
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+    <nav class="navbar has-background-white-ter" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        {{ link("index", "b", "<u>B</u>lag") }}
+      </div>
+      <div class="navbar-menu">
+        <!-- navbar items -->
+        <div class="navbar-end">
+          <!-- logout -->
+        </div>
+      </div>
+    </nav>
+{% with messages = get_flashed_messages(category_filter=["notification"]) %}
+{% if messages %}
+    <section class="section" id="notifications">
+      <div class="container">
+{% for message in messages %}
+{% set message_values = message.split("|") %}
+        <div class="notification is-{{ message_values[1] }}">
+          <button class="delete" @click="close_notification"></button>
+          {{ message_values[0] }}
+        </div>
+{% endfor %}
+      </div>
+    </section>
+    <script charset="utf-8">
+      let notifications = new Vue({
+        el: "#notifications",
+        methods: {
+          close_notification(event) {
+            event.target.parentElement.remove();
+            if (document.querySelectorAll(".notification")[0] == undefined)
+              document.querySelector("#notifications").remove();
+          }
+        }
+      })
+    </script>
+{% endif %}
+{% endwith %}
+    <section class="section" id="app">
+      <div class="container">
+        {% block body %}{% endblock %}
+      </div>
+    </section>
+    {% block script %}
+    <script charset="utf-8">
+      let app = new Vue({el: "#app", mixins: [defaultMixin]});
+    </script>
+    {% endblock %}
+    <footer class="footer">
+      <div class="content containers">
+        <div class="container is-6">
+          <p>Currently under active development.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
