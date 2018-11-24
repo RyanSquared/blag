@@ -11,7 +11,7 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
@@ -92,5 +92,5 @@ ENV/
 # Config files
 config.py
 
-# Web assets
-node_modules/
+# NodeJS files
+static/node_modules
