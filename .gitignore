@@ -89,12 +89,8 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Blog database
-blog.db*
-
 # Config files
 config.py
-ssl/
 
-# Vim
-.vimrc
+# Web assets
+node_modules/
