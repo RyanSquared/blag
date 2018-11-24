@@ -1,0 +1,12 @@
+{
+  "name": "blag",
+  "version": "0.1.0",
+  "description": "A blog",
+  "repository": "https://github.com/RyanSquared/blag",
+  "author": "Ryan Heywood (RyanSquared) <ryan@hashbang.sh>",
+  "license": "MIT",
+  "dependencies": {
+    "bulma": "^0.7.2",
+    "vue": "^2.5.17"
+  }
+}
