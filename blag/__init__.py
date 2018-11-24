@@ -8,9 +8,14 @@ def create_app(config: dict = None) -> Flask:
     app = Flask(__name__)
 
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.config.from_pyfile("blag.cfg", silent=True)
 
     from . import auth
+
+    try:
+        import config
+        app.config.from_object(config)
+    except Exception as e:
+        print(e)
 
     for item in [auth]:
         if hasattr(item, "init_app"):

@@ -1,14 +1,13 @@
 <!DOCTYPE HTML>
 <!-- vim:set et sw=2 ts=2 ft=htmldjango: -->
 
-{%- macro link(target, accesskey, content) %}
+{%- macro link(target, content) %}
 {%- set href = url_for(target, **kwargs) -%}
 {%- autoescape false -%}
 {%- if request.path == href -%}
-  <a class="navbar-item is-active" href="{{ href }}"
-    accesskey="{{ accesskey }}">{{ content }}</a>
+  <a class="navbar-item is-active" href="{{ href }}">{{ content }}</a>
 {%- else -%}
-  <a class="navbar-item" href="{{ href }}" accesskey="{{ accesskey }}">{{ content }}</a>
+  <a class="navbar-item" href="{{ href }}">{{ content }}</a>
 {%- endif -%}
 {%- endautoescape -%}
 {% endmacro %}
@@ -18,7 +17,8 @@
     <meta name="viewport" content="width=device-width" />
     <script src="{{ url_for('static', filename='node_modules/vue/dist/vue.min.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/bulma/css/bulma.min.css') }}">
-    <title>{{ config.APP_NAME }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <title>{{ config.APP_NAME or "Blag" }}</title>
     <script charset="utf-8">
       function get_target(element) {
         return document.querySelector(element.getAttribute("data-target"));
@@ -35,11 +35,10 @@
        */
       var defaultMixin = {
         methods: {
-          close_target(event) {
-            console.log(event);
+          close(event) {
             get_target(event.target).remove();
           },
-          copy_target(event) {
+          copy(event) {
             let target = get_target(event.target);
             let input_element = document.createElement("input");
             document.querySelector("body").appendChild(input_element);
@@ -57,7 +56,7 @@
   <body>
     <nav class="navbar has-background-white-ter" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        {{ link("index", "b", "<u>B</u>lag") }}
+        {{ link("index", config.APP_NAME or "Blag") }}
       </div>
       <div class="navbar-menu">
         <!-- navbar items -->
