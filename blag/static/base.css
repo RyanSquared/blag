@@ -1,0 +1,7 @@
+div.card {
+  margin-bottom: 16px;
+}
+
+div.card:last-type {
+  margin-bottom: 0px;
+}
