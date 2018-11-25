@@ -11,6 +11,9 @@ include = ["static/node_modules/**/*"]
 python = "^3.6"
 flask = "^1.0"
 approute = {git = "https://github.com/RyanSquared/approute"}
+arrow = "^0.12.1"
+sqlalchemy = "^1.2"
+flask_sqlalchemy = "^2.3"
 
 [tool.poetry.dev-dependencies]
 
