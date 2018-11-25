@@ -3,37 +3,28 @@
 {% block body %}
 <div class="columns">
 	<div class="column is-9">
-		<div class="card" id="post-1">
+{% for post in posts %}
+		<div class="card" id="post-{{ loop.index }}">
 			<div class="card-content">
-				<h3 class="title is-3">Title Goes Here</h3>
-				<h5 class="subtitle is-5 is-spaced">
-					2018-11-03 21:33
-					<span class="tag">security</span>
+				<h3 class="title is-3">{{ post.title }}</h3>
+				<h5 class="subtitle is-5">
+					{{ post.date.strftime("%Y-%m-%d %H:%M") }}
+{% for tag in post.tags %}
+					<span class="tag">{{ tags[tag].name }}</span>
+{% endfor %}
 				</h5>
-				<p class="content">
-				Content for the article can and should go here.
-				</p>
+				<p class="content">{{ post.content }}</p>
 			</div>
 		</div>
-		<div class="card" id="post-2">
-			<div class="card-content">
-				<h3 class="title is-3">Another Title can go Here</h3>
-				<h5 class="subtitle is-5 is-spaced">
-					2018-11-03 21:36
-					<span class="tag">privacy</span>
-					<span class="tag">networking</span>
-				</h5>
-				<p class="content">
-				Content for the article can and should go here.
-				</p>
-			</div>
-		</div>
+{% endfor %}
 	</div>
 	<div class="column">
 		<!-- placeholder, eventually archive?-->
 		<div class="card">
 			<div class="card-content">
-				stuff!
+				{% autoescape false %}
+				{{ config.SIDEBAR_HTML }}
+				{% endautoescape %}
 			</div>
 		</div>
 	</div>
