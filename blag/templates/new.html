@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+#tags-container {
+  padding: 0px;
+}
+
+#tags-container > * {
+  margin-left: 4px;
+}
+
+#tags {
+  width: 100%;
+  border: none;
+  outline: none;
+}
+#tags:focus {
+  outline: none;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="columns">
+	<div class="column is-9">
+		<form class="card">
+			<div class="card-content">
+				<h5 class="subtitle is-5">
+					<div class="field is-horizontal">
+						<label class="field-label">Title:</label>
+						<div class="field-body">
+							<div class="field">
+								<input class="input" type="text" name="title" placeholder="Title"
+									v-model="title"/>
+							</div>
+						</div>
+					</div>
+				</h5>
+				<h5 class="subtitle is-5">
+					<div class="field is-horizontal">
+						<label class="field-label">Tags:</label>
+						<div class="field-body">
+							<div class="field">
+								<div class="input" id="tags-container"
+									@click.self="focusChips">
+									<span v-for="chip in chips" class="tag">{{ "chip" | vue }}</span>
+									<input type="text" name="tags" id="tags"
+										v-model="chip_input"
+										@keydown.delete.prevent="tryDeleteLatestChip" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</h5>
+				<div class="field is-horizontal">
+					<label class="field-label">Content:</label>
+					<div class="field-body">
+						<div class="field">
+							<textarea class="textarea" v-model="unrendered"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card-footer">
+				<a class="card-footer-item">Submit</a>
+			</div>
+		</form>
+	</div>
+	<div class="column">
+		<div class="card">
+			<div class="card-content">
+				<h4 class="title is-4">{{ "title" | vue }}</h4>
+				<h6 class="title is-6">
+				  {{ "time" | vue }}
+				</h6>
+				<span v-for="chip in chips" class="tag">{{ "chip" | vue }}</span>
+			</div>
+		</div>
+		<!-- blank space -->
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script charset="utf-8">
+let app = new Vue({
+el: "#app",
+	mixins: [defaultMixin],
+	data: {
+		chips: [],
+		chip_input: "",
+		unrendered: "",
+		timeout: null,
+		title: "",
+		time: "",
+	},
+	watch: {
+		chip_input() {
+			let key = this.chip_input.slice(-1)
+			if (key === "," || key === " ") {
+				// add current chip
+				this.chips.push(this.chip_input.slice(0, -1));
+				this.chip_input = "";
+			}
+		},
+		unrendered() {
+			if (this.timeout !== null)
+				clearTimeout(this.timeout)
+
+			this.timeout = setTimeout(()=> {
+				this.syncMarkdown();
+			}, 3000);
+		}
+	},
+	methods: {
+		tryDeleteLatestChip() {
+			if (this.chip_input.length == 0)
+				this.chips.pop();
+			else
+				this.chip_input = this.chip_input.slice(0, -1);
+		},
+		focusChips() {
+			let tags = document.querySelector("#tags");
+			tags.focus();
+		},
+		syncMarkdown() {
+			// TODO
+		}
+	}
+});
+
+function padZeroes(n) {
+	n = n.toString();
+	return n.length == 2 ? n : "0" + n;
+}
+
+setInterval(function() {
+	let date = new Date();
+	let items = [];
+	items.push(date.getFullYear() + "-");
+	items.push(padZeroes(date.getMonth() + 1) + "-")
+	items.push(padZeroes(date.getDate()) + " " + padZeroes(date.getHours()));
+	items.push(":" + padZeroes(date.getMinutes()));
+	app.time = items.join("");
+}, 500);
+</script>
+{% endblock %}
